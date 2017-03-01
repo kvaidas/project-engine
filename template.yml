@@ -1,0 +1,74 @@
+kind: Template
+apiVersion: v1
+objects:
+
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: ${NAME}
+
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: ${NAME}
+    spec:
+      source:
+        type: Git
+        git:
+          uri: https://github.com/kvaidas/nginx-openshift
+      strategy:
+        type: Docker
+        dockerStrategy:
+          from:
+            kind: ImageStreamTag
+            name: 'nginx:latest'
+          env:
+            - name: NGINX_PORT
+              value: "8080"
+          forcePull: true
+      output:
+        to:
+           kind: ImageStreamTag
+           name: ${NAME}:latest
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: ${NAME}
+    spec:
+      strategy:
+        type: Rolling
+      replicas: "${{REPLICA_COUNT}}" 
+      template:
+        spec:
+          containers:
+          - name: ${NAME}
+        metadata:
+          labels:
+            name: ${NAME}
+      selector:
+        name: ${NAME}
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            from:
+              kind: ImageStreamTag
+              name: ${NAME}:latest
+            containerNames:
+              - ${NAME}
+
+metadata:
+  name: project-engine
+
+parameters:
+  - name: NAME
+    description: The name assigned to all objects
+  - name: REPLICA_COUNT
+    description: Number of replicas to run
+    value: "2"
+    required: true
