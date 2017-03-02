@@ -67,6 +67,9 @@ metadata:
 
 parameters:
   - name: NAME
+    required: true
+    generate: expression
+    from: "engine-[a-z0-9]{16}"
     description: The name assigned to all objects
   - name: REPLICA_COUNT
     description: Number of replicas to run
