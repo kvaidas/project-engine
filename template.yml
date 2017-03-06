@@ -20,12 +20,11 @@ objects:
         type: Docker
         dockerStrategy:
           from:
-            kind: ImageStreamTag
+            kind: DockerImage
             name: 'nginx:latest'
           env:
             - name: NGINX_PORT
               value: "8080"
-          forcePull: true
       output:
         to:
            kind: ImageStreamTag
