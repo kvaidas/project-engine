@@ -7,6 +7,15 @@ objects:
     metadata:
       name: ${NAME}
 
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: nginx
+    spec:
+      dockerImageRepository: docker.io
+      tags:
+        - name: latest
+
   - kind: BuildConfig
     apiVersion: v1
     metadata:
@@ -60,6 +69,27 @@ objects:
               name: ${NAME}:latest
             containerNames:
               - ${NAME}
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: ${NAME}
+    spec:
+      ports:
+        - port: 80
+          targetPort: 8080
+      selector:
+        name: ${NAME}
+
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: ${NAME}
+    spec:
+      to:
+        kind: Service
+        name: ${NAME}
+        weight: 100
 
 metadata:
   name: project-engine
