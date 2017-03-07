@@ -7,15 +7,6 @@ objects:
     metadata:
       name: ${NAME}
 
-  - kind: ImageStream
-    apiVersion: v1
-    metadata:
-      name: nginx
-    spec:
-      dockerImageRepository: docker.io
-      tags:
-        - name: latest
-
   - kind: BuildConfig
     apiVersion: v1
     metadata:
@@ -30,7 +21,7 @@ objects:
         dockerStrategy:
           from:
             kind: DockerImage
-            name: 'nginx:latest'
+            name: 'nginx:mainline'
           env:
             - name: NGINX_PORT
               value: "8080"
