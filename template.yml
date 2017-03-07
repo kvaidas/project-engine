@@ -54,6 +54,12 @@ objects:
         spec:
           containers:
           - name: ${NAME}
+            readinessProbe:
+              timeoutSeconds: 1
+              initialDelaySeconds: 5
+              httpGet:
+                path: /
+                port: 8080
         metadata:
           labels:
             name: ${NAME}
