@@ -55,6 +55,8 @@ objects:
             - name: login-password
               mountPath: /var/run/secrets/basic-auth-credentials
               readOnly: true
+            - name: test-file
+              mountPath: /var/www/test-file
             env:
               - name: AUTH_USER
                 valueFrom:
@@ -65,6 +67,9 @@ objects:
             - name: login-password
               secret:
                 secretName: basic-auth
+            - name: test-file
+              configMap:
+                name: test-file
                
         metadata:
           labels:
@@ -110,6 +115,13 @@ objects:
     stringData:
       username: foo
       password: bar
+
+  - kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      name: test-file
+    data:
+      file-content: 'hello ConfigMap world!'
 
 metadata:
   name: project-engine
