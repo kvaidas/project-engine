@@ -51,6 +51,21 @@ objects:
               httpGet:
                 path: /
                 port: 8080
+            volumeMounts:
+            - name: login-password
+              mountPath: /var/run/secrets/basic-auth-credentials
+              readOnly: true
+            env:
+              - name: AUTH_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: basic-auth
+                    key: username
+          volumes:
+            - name: login-password
+              secret:
+                secretName: basic-auth
+               
         metadata:
           labels:
             name: ${NAME}
@@ -87,6 +102,14 @@ objects:
         kind: Service
         name: ${NAME}
         weight: 100
+
+  - kind: Secret
+    apiVersion: v1
+    metadata:
+      name: basic-auth
+    stringData:
+      username: foo
+      password: bar
 
 metadata:
   name: project-engine
